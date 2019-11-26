@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google" content="notranslate">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Actor&display=swap');
+        *{
+            font-family: 'Actor', sans-serif;
+        }
+        .dark{
+            --color-accent:      #30A0FF;
+            --color-background:  #222222;
+            --text-dark:         #CECECE;
+            --text-light:        #606060;
+            --color-link:        #03A9F4;
+
+            --color-primary:     #191919;
+            --color-secondary:   #222222;
+            --color-tertiary:    #2d2d2d;
+            --color-quarternary: #333333;
+        }
+        body{
+            background: var(--color-primary);
+            color: var(--text-dark);
+        }
+        textarea{
+            background: var(--color-tertiary);
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            width: 200px;
+            height: 30px;
+            color: var(--text-dark);
+            font-size: 100%;
+        }
+        input{
+            font-size: 100%;
+            background: var(--color-tertiary);
+            border: none;
+            border-radius: 5px;
+            padding: 0 15px;
+            width: 200px;
+            height: 30px;
+            color: var(--text-dark);
+        }
+        input[type='checkbox']{
+            width: 20px;
+            height: 20px;
+            margin-top: 10px;
+        }
+        li{
+            list-style: none;
+        }
+        ul{
+            padding-left: 10px;
+        }
+        label[acc]{
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+        b[local]{
+            color: var(--color-accent);
+        }
+        a{
+            text-decoration: none;
+            color: var(--color-link);
+        }
+    </style>
+    
+    <title>SocketChat</title>
+</head>
+<body class="dark">
+    konnichiwa
+    
+    <div id="app">
+        online: {{counter}} <br>
+        <br>
+        <label acc for="username" v-if="newUserName.length > 0 || newUserName != ''">Nickname</label><br>
+        <input type="text" v-model="newUserName" id="username" placeholder="Your name">
+        <button v-on:click="changeName" v-if="saveNewNameHidden">Save</button>
+        <br>
+        <label for="sendwentr" style="vertical-align: super;" title="You can use Ctrl+Enter to send also">Send with enter</label>
+        <input type="checkbox" v-model="enterSend" name="sendWithEnter" id="sendwentr">
+        <br>
+
+        <label acc for="msg" v-if="message.length > 0 || message != ''">Type a message</label><br>
+        <textarea
+            type="text"
+            v-on:keyUp="checkckey"
+            v-model="message"
+            id="msg"
+            placeholder="Type a message"
+        ></textarea>
+        <br>
+        <button v-on:click="sendMessage">Send</button>
+        <button v-on:click="clearMessages">Clear messages</button>
+
+        
+        <div>
+            <ul id="messages"> </ul>
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+    <script src="/mobileCheck.js"></script>
+    <script>
+
+        io = io();
+        app = new Vue({
+            el: '#app',
+            data:{
+                message:'',
+                user: localStorage.name || 'Anon',
+                newUserName: 'Anon',
+                counter: 0,
+                saveNewNameHidden: false,
+                enterSend: false,
+            },
+            created(){
+                // this.user = prompt("Your name");
+                this.user = localStorage.name || `Anon#${this.genRandCode()}`
+                this.newUserName = this.user;
+                io.emit('joined', {name: this.user});
+                this.enterSend = sessionStorage.enterSend;
+            },
+            watch:{
+                message(val){
+                    if(val){
+                        io.emit('typing', true);
+                        setTimeout(() => {
+                            io.emit('typing', false);
+                        }, 2000);
+                    }
+                },
+                newUserName(val, old){
+                    if(val == this.user){
+                        this.saveNewNameHidden = false;
+                    }
+                    else{
+                        this.saveNewNameHidden = true;
+                    }
+                },
+                enterSend(val){
+                    localStorage.setItem('enterSend', val);
+                }
+            },
+            methods:{
+                genRandCode: function(){
+                    rand = (Math.random()+1).toString(36).substr(7);
+                    if(rand.length >= 7 || rand.length <= 5){
+                        this.genRandCode();
+                    }
+                    this.code = rand;
+                    return rand;
+                },
+                sendMessage: function(){
+                    if(this.message.length > 0){
+                        io.emit('chatt', {user: this.user, message: this.message});
+                        this.message = '';
+                    }
+                    if(isMobile){
+                        document.getElementById('msg').focus();
+                    }
+                },
+                checkckey: function(e){
+                    e = e || window.event;
+                    if (e.keyCode == 13 && !e.shiftKey && this.enterSend){
+                        this.sendMessage();
+                    }
+                    else if(e.ctrlKey && e.keyCode == 13){
+                        this.sendMessage()
+                    }
+                    
+                },
+                changeName: function(){
+                    // io.emit('checkName', {new: this.newUserName, code: this.genRandCode()});
+                    // io.once('checkName', name => {
+                    //     if (name.avaliable){
+                    //     }
+                    // })
+                    Cookies.set('name', this.newUserName, {domain: '.localhost:3000'});
+                    localStorage.setItem('name', this.newUserName)
+                    io.emit('newName', {from: this.user, to: this.newUserName});
+                    this.user = this.newUserName;
+                },
+                clearMessages: function(){
+                    document.getElementById('messages').innerHTML = ''
+                }
+            }
+        });
+
+   
+        let urlReg = new RegExp(/((http(s?)):\/\/)?([0-9a-z]{1,}.){2,}/gi);
+
+        const messages = document.getElementById('messages');
+        io.on('count', count => app.counter = count.count)
+        
+        io.on('chatt', msg => {
+            console.log(msg);
+            const listItem = document.createElement('li');
+            msg.message = urlReg.test(msg.message) ? `<a href="${msg.message}" target="blank">${msg.message}</a>`: msg.message;
+            listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: ${msg.message}`;
+            messages.appendChild(listItem);
+            // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        io.on('joined', user => {
+            console.log(user);
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${user.name} joined`;
+            messages.appendChild(listItem);
+            // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+
+        io.on('newName', user => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${user.from} changed name to ${user.to}`;
+            messages.appendChild(listItem);
+            console.log(user);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+        
+
+        io.on('typing', is => {
+            document.title = is ? 'someone is typing' : 'socketchat';
+        })
+
+    </script>
+
+</body>
+</html>
