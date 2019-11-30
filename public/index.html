@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="google" content="notranslate">
-    <title>Touku</title>
+    <title>RocketChatto</title>
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
 
     <style>
         @import url('https://fonts.googleapis.com/css?family=Actor&display=swap');
@@ -15,7 +17,7 @@
         .dark{
             --color-accent:      #30A0FF;
             --color-background:  #222222;
-            --text-dark:         #CECECE;
+            --text-dark:         #CCCCCC;
             --text-light:        #606060;
             --color-link:        #03A9F4;
 
@@ -86,8 +88,11 @@
     
 </head>
 <body class="dark">
-    konnichiwa
-    
+    <!-- konnichiwa -->
+    The actual favicon is from Coding planets app,
+    it is temorary untuil i create one,
+    it was the mos similar to an icon i could find quickly
+
     <div id="app">
         online: {{counter}} <br>
         <br>
@@ -108,6 +113,12 @@
             placeholder="Type a message"
         ></textarea>
         <br>
+        <label for="sendwentr" style="vertical-align: super;" title="chet to show as image">the text is a image link</label>
+        <input type="checkbox" v-model="isImage" name="sendWithEnter" id="sendwentr">
+        <br>        
+        <!-- <label for="sendwentr" style="vertical-align: super;" title="check to show as embed video">the text is a youtube video link</label>
+        <input type="checkbox" v-model="isVideo" name="sendWithEnter" id="sendwentr">
+        <br> -->
         <button v-on:click="sendMessage">Send</button>
         <button v-on:click="clearMessages">Clear messages</button>
 
@@ -122,7 +133,15 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
     <script src="/mobileCheck.js"></script>
+    <script src="/favico-0.3.10.min.js"></script>
     <script>
+
+        var favicon = new Favico({
+            position  :'up',
+            animation :'fade',
+            bgColor   :'#dd2c00',
+            textColor :'#dd2c00'
+        });
 
         io = io();
         app = new Vue({
@@ -134,6 +153,13 @@
                 counter: 0,
                 saveNewNameHidden: false,
                 enterSend: false,
+                isImage: false,
+                isVideo: false,
+                sendedCounter: 0,
+                hasUnreadMessage: false,
+                docVisible: true
+            },
+            computed:{
             },
             created(){
                 // this.user = prompt("Your name");
@@ -141,11 +167,14 @@
                 this.newUserName = this.user;
                 io.emit('joined', {name: this.user});
                 this.enterSend = sessionStorage.enterSend;
+                document.addEventListener('visibilitychange', () => {
+                    this.docVisible = document.visibilityState == 'visible'
+                })
             },
             watch:{
                 message(val){
                     if(val){
-                        io.emit('typing', true);
+                        io.emit('typing', {user: this.user});
                         setTimeout(() => {
                             io.emit('typing', false);
                         }, 2000);
@@ -161,6 +190,25 @@
                 },
                 enterSend(val){
                     localStorage.setItem('enterSend', val);
+                },
+                docVisible(val){
+                    if(!val && this.hasUnreadMessage){
+                        favicon.badge(1);
+                    }
+                    else if(val && this.hasUnreadMessage){
+                        setTimeout(() => {
+                            this.hasUnreadMessage = false;
+                            favicon.badge(0);
+                        }, 1000);
+                    }
+                },
+                hasUnreadMessage(val){
+                    if(val){
+                        favicon.badge(1);
+                    }
+                    else{
+                        favicon.badge(0);
+                    }
                 }
             },
             methods:{
@@ -174,7 +222,17 @@
                 },
                 sendMessage: function(){
                     if(this.message.length > 0){
-                        io.emit('chatt', {user: this.user, message: this.message});
+                        if(this.isImage){
+                            io.emit('chatt', {user: this.user, message: this.message, type: 'img'});
+                            this.isImage = false;
+                        }
+                        if(this.isImage){
+                            io.emit('chatt', {user: this.user, message: this.message, type: 'vid'});
+                            this.isVideo = false;
+                        }
+                        else{
+                            io.emit('chatt', {user: this.user, message: this.message});
+                        }
                         this.message = '';
                     }
                     if(isMobile){
@@ -215,17 +273,40 @@
         io.on('count', count => app.counter = count.count)
         
         io.on('chatt', msg => {
-            console.log(msg);
+            // console.log(msg);
             const listItem = document.createElement('li');
-            msg.message = urlReg.test(msg.message) ? `<a href="${msg.message}" target="blank">${msg.message}</a>`: msg.message;
-            listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: ${msg.message}`;
+            if(msg.type == 'img'){
+                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <img width="300px" src="${msg.message}">`;
+            }
+            else if(msg.type == 'vid'){
+                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <iframe width="300px" src="${msg.message}"></iframe>`;
+            }
+            else{
+                msg.message = urlReg.test(msg.message) ? `<a href="${msg.message}" target="blank">${msg.message}</a>`: msg.message;
+                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: ${msg.message}`;
+            }
             messages.appendChild(listItem);
             // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
+            
+            if(document.visibilityState == "hidden"){
+                app.hasUnreadMessage = true;
+            }
+          
+            
+
             window.scrollTo(0, document.body.scrollHeight);
         });
 
+        // io.on('chatt_image', img => {
+        //     const listItem = document.createElement('li');
+        //     listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <img src="${msg.message}">`;
+        //     messages.appendChild(listItem);
+        //     // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
+        //     window.scrollTo(0, document.body.scrollHeight);
+        // })
+
         io.on('joined', user => {
-            console.log(user);
+            // console.log(user);
             const listItem = document.createElement('li');
             listItem.innerHTML = `${user.name} joined`;
             messages.appendChild(listItem);
@@ -237,13 +318,14 @@
             const listItem = document.createElement('li');
             listItem.innerHTML = `${user.from} changed name to ${user.to}`;
             messages.appendChild(listItem);
-            console.log(user);
+            // console.log(user);
             window.scrollTo(0, document.body.scrollHeight);
         })
+
         
 
         io.on('typing', is => {
-            document.title = is ? 'someone is typing' : 'Touku';
+            document.title = is ? `${is.user} is typing` : 'RocketChatto';
         })
 
     </script>

@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
 
     socket.on('chatt', msg => io.emit('chatt', msg) );
 
-    socket.on('typing', is => socket.emit('typing', is) );
+    socket.on('typing', is => io.emit('typing', is) );
 
     socket.on('newName', name => io.emit('newName', name));
 
