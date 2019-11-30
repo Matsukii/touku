@@ -1,5 +1,5 @@
 {
-  "name": "Rocketchat",
+  "name": "Touku",
   "version": "1.0.0",
   "description": "A chat app made with vue and socket io",
   "main": "index.js",
