@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="google" content="notranslate">
-    
+    <title>Rocketchat</title>
+
     <style>
         @import url('https://fonts.googleapis.com/css?family=Actor&display=swap');
         *{
@@ -22,6 +23,18 @@
             --color-secondary:   #222222;
             --color-tertiary:    #2d2d2d;
             --color-quarternary: #333333;
+        }
+        .light{
+            --color-accent:      #30A0FF;
+            --color-background:  #FFFFFF;
+            --text-dark:         #606060;
+            --text-light:        #CECECE;
+            --color-link:        #03A9F4;
+
+            --color-primary:     #FFFFFF;
+            --color-secondary:   #FFFFFF;
+            --color-tertiary:    #F1F1F1;
+            --color-quarternary: #CECECE;
         }
         body{
             background: var(--color-primary);
@@ -71,7 +84,6 @@
         }
     </style>
     
-    <title>SocketChat</title>
 </head>
 <body class="dark">
     konnichiwa
@@ -197,7 +209,7 @@
         });
 
    
-        let urlReg = new RegExp(/((http(s?)):\/\/)?([0-9a-z]{1,}.){2,}/gi);
+        let urlReg = new RegExp(/((http||https):\/\/?)([0-9a-z]*.){1,}/gi);
 
         const messages = document.getElementById('messages');
         io.on('count', count => app.counter = count.count)
@@ -231,7 +243,7 @@
         
 
         io.on('typing', is => {
-            document.title = is ? 'someone is typing' : 'socketchat';
+            document.title = is ? 'someone is typing' : 'Rocketchat';
         })
 
     </script>

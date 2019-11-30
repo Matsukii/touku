@@ -1,5 +1,5 @@
 {
-  "name": "socketchat",
+  "name": "Rocketchat",
   "version": "1.0.0",
   "description": "A chat app made with vue and socket io",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Matsukii/socketchat.git"
+    "url": "git+https://github.com/Matsukii/rocketchat.git"
   },
   "keywords": [
     "chat",
@@ -20,9 +20,9 @@
   "author": "Matsukii",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Matsukii/socketchat/issues"
+    "url": "https://github.com/Matsukii/rocketchat/issues"
   },
-  "homepage": "https://github.com/Matsukii/socketchat#readme",
+  "homepage": "https://github.com/Matsukii/rocketchat#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
