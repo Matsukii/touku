@@ -8,11 +8,14 @@
     <title>RocketChatto</title>
 
     <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
+    <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Actor&display=swap');
+        /* @import url('https://fonts.googleapis.com/css?family=Actor&display=swap'); */
+        @import url('https://fonts.googleapis.com/css?family=Catamaran&display=swap');
         *{
-            font-family: 'Actor', sans-serif;
+            font-family: 'Catamaran', sans-serif;
         }
         .dark{
             --color-accent:      #30A0FF;
@@ -41,6 +44,8 @@
         body{
             background: var(--color-primary);
             color: var(--text-dark);
+            margin: 0;
+            height: 100vh;
         }
         textarea{
             background: var(--color-tertiary);
@@ -51,6 +56,8 @@
             height: 30px;
             color: var(--text-dark);
             font-size: 100%;
+            width: -webkit-fill-available;
+            padding: 5px 15px 0px;
         }
         input{
             font-size: 100%;
@@ -84,49 +91,120 @@
             text-decoration: none;
             color: var(--color-link);
         }
+
+        button[send]{
+            border: none;
+            padding: 0px 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            background: var(--color-background);
+            color: var(--color-accent);
+            font-variant: all-small-caps;
+            font-size: 100%;
+        }
+
+
+        #app{
+            height: 90%;
+        }
+        .chatt-main-container{
+            max-width: 400px;
+            margin: auto;
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            padding: 15px;
+        }
+        .cm-minibar-container{
+            margin: 15px 0px 0px;
+            background: var(--color-tertiary);
+            border-radius: 10px;
+            height: 20px;
+            padding: 13px 15px 5px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        .cm-minibar-container b{
+            margin-bottom: -8ox;
+        }
+        .cm-minibar-container img{
+            align-self: flex-end;
+            margin-bottom: -21px;
+            max-width: 16px;
+            cursor: pointer;
+        }
+
+        .cm-messages-main-container{
+            height: 100%;
+            /* overflow-y: scroll; */
+        }
+        .cm-inout-container{
+            display: flex;
+        }
+
+        .pf-back-icon{
+            transform: rotate(-90deg);
+            max-width: 100px;
+            cursor: pointer;
+        }
     </style>
     
 </head>
 <body class="dark">
-    <!-- konnichiwa -->
-    The actual favicon is from Coding planets app,
-    it is temorary untuil i create one,
-    it was the mos similar to an icon i could find quickly
+    <!-- konnichiwa
+    The actual favicon is from Coding planets app, <br>
+    it is temorary untuil i create one, <br>
+    it was the mos similar to an icon i could find quickly -->
 
     <div id="app">
-        online: {{counter}} <br>
-        <br>
-        <label acc for="username" v-if="newUserName.length > 0 || newUserName != ''">Nickname</label><br>
-        <input type="text" v-model="newUserName" id="username" placeholder="Your name">
-        <button v-on:click="changeName" v-if="saveNewNameHidden">Save</button>
-        <br>
-        <label for="sendwentr" style="vertical-align: super;" title="You can use Ctrl+Enter to send also">Send with enter</label>
-        <input type="checkbox" v-model="enterSend" name="sendWithEnter" id="sendwentr">
-        <br>
+        <div class="chatt-main-container" v-if="showChatto">
 
-        <label acc for="msg" v-if="message.length > 0 || message != ''">Type a message</label><br>
-        <textarea
-            type="text"
-            v-on:keyUp="checkckey"
-            v-model="message"
-            id="msg"
-            placeholder="Type a message"
-        ></textarea>
-        <br>
-        <label for="sendwentr" style="vertical-align: super;" title="chet to show as image">the text is a image link</label>
-        <input type="checkbox" v-model="isImage" name="sendWithEnter" id="sendwentr">
-        <br>        
-        <!-- <label for="sendwentr" style="vertical-align: super;" title="check to show as embed video">the text is a youtube video link</label>
-        <input type="checkbox" v-model="isVideo" name="sendWithEnter" id="sendwentr">
-        <br> -->
-        <button v-on:click="sendMessage">Send</button>
-        <button v-on:click="clearMessages">Clear messages</button>
+            <div class="cm-minibar-container">
+                <b>
+                    online: <a>{{counter}}</a>
+                </b>
+                <img src="/icons/profile.svg" alt="profile icon" v-on:click="showChatto = !showChatto">
 
-        
-        <div>
-            <ul id="messages"> </ul>
+            </div>
+            
+            <div id="msgs" class="cm-messages-main-container">
+                <div class="cm-messages-sub-container">
+                    <ul id="messages"> </ul>
+                </div>
+            </div>
+
+            <div class="cm-inout-container">
+                <textarea
+                    type="text"
+                    v-on:keyUp="checkckey"
+                    v-model="message"
+                    id="msg"
+                    placeholder="Type a message"
+                ></textarea>
+                
+                <button send v-on:click="sendMessage">Send</button>
+            </div>
+            <a>{{warningMessage}}</a>
+            
         </div>
+      
+        <div class="profile-main-container chatt-main-container" v-if="!showChatto">
+            <div class="cm-minibar-container">
+                <img src="/icons/arrowUp.svg" class="pf-back-icon" alt="profile icon" v-on:click="showChatto = !showChatto">
+                <b> Profile </b>
+            </div>
+        </div>
+
+
     </div>
+    
+    
+    <!-- <button v-on:click="clearMessages">Clear messages</button> -->
+    
+    
+    <!-- <label for="sendwentr" style="vertical-align: super;" title="chet to show as image">the text is a image link</label>
+    <input type="checkbox" v-model="isImage" name="sendWithEnter" id="sendwentr">
+    <br>         -->
     
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -135,6 +213,10 @@
     <script src="/mobileCheck.js"></script>
     <script src="/favico-0.3.10.min.js"></script>
     <script>
+        if(Notification.permission != "granted"){
+            Notification.requestPermission();
+        }
+        let hasUnreadInterval;
 
         var favicon = new Favico({
             position  :'up',
@@ -148,6 +230,9 @@
             el: '#app',
             data:{
                 message:'',
+                warningMessage: '',
+                modf: false,
+                showChatto: true,
                 user: localStorage.name || 'Anon',
                 newUserName: 'Anon',
                 counter: 0,
@@ -157,7 +242,8 @@
                 isVideo: false,
                 sendedCounter: 0,
                 hasUnreadMessage: false,
-                docVisible: true
+                docVisible: true,
+                color: '#03A9F4'
             },
             computed:{
             },
@@ -204,10 +290,16 @@
                 },
                 hasUnreadMessage(val){
                     if(val){
-                        favicon.badge(1);
+                        hasUnreadInterval = setInterval(() => {
+                            favicon.badge(1);
+                        }, 60000);
                     }
                     else{
+                        clearInterval(hasUnreadInterval);
                         favicon.badge(0);
+                        try {
+                            notfy.close();
+                        } catch (e) {}
                     }
                 }
             },
@@ -224,6 +316,8 @@
                     if(this.message.length > 0){
                         if(this.isImage){
                             io.emit('chatt', {user: this.user, message: this.message, type: 'img'});
+                            false ? io.emit('chatt', {
+                                user: {nick: this.user}, message: this.message, type: 'img'}):null;
                             this.isImage = false;
                         }
                         if(this.isImage){
@@ -231,7 +325,7 @@
                             this.isVideo = false;
                         }
                         else{
-                            io.emit('chatt', {user: this.user, message: this.message});
+                            io.emit('chatt', {user: this.user, message: this.message, color: this.color});
                         }
                         this.message = '';
                     }
@@ -272,29 +366,64 @@
         const messages = document.getElementById('messages');
         io.on('count', count => app.counter = count.count)
         
+        let showNotification;
+
         io.on('chatt', msg => {
             // console.log(msg);
             const listItem = document.createElement('li');
+
+
+            if(showNotification) clearTimeout(showNotification);
+            showNotification = setTimeout(() => {
+                if(msg.user != app.user && app.hasUnreadMessage){
+                    notfy = new Notification(`New message from ${msg.user}`, {
+                        body: msg.message,
+                        
+                    });
+                    if (msg.type == 'img'){
+                        notfy.image = msg.message;
+                    }
+                    notfy.onclick = () => {
+                        window.open(window.location.href);
+                        setTimeout(() => {
+                            notfy.close();
+                        }, 200);
+                    }
+                }
+            }, 1000);
+
+
             if(msg.type == 'img'){
-                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <img width="300px" src="${msg.message}">`;
+                // listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <img width="300px" src="${msg.message}">`;
+                // listItem.innerHTML = `<b style="color:${msg.color}">${msg.user}</b>: <br> <img width="300px" src="${msg.message}">`;
+                listItem.innerHTML = `<b ${app.user == msg.user ? 'style="color:${msg.color}"' : 'remote'}>${msg.user}</b>: <br> <img width="300px" src="${msg.message}">`;
             }
             else if(msg.type == 'vid'){
-                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: <br> <iframe width="300px" src="${msg.message}"></iframe>`;
+                listItem.innerHTML = `<b style="color:${msg.color}">${msg.user}</b>: <br> <iframe width="300px" src="${msg.message}"></iframe>`;
             }
             else{
                 msg.message = urlReg.test(msg.message) ? `<a href="${msg.message}" target="blank">${msg.message}</a>`: msg.message;
-                listItem.innerHTML = `<b ${app.user == msg.user ? 'local': 'remote'}>${msg.user}</b>: ${msg.message}`;
+                // listItem.innerHTML = `<b ${app.user == msg.user ? 'style="color:'+msg.color+'"' : 'remote'}>${msg.user}</b>: ${msg.message}`;
+                listItem.innerHTML = `<b style="color:${msg.color}">${msg.user}</b>: ${msg.message}`;
             }
+            // new Notification(`${msg.user}: ${msg.message}`);
             messages.appendChild(listItem);
             // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
             
+         
+
             if(document.visibilityState == "hidden"){
                 app.hasUnreadMessage = true;
             }
           
             
+            // text box bottom, scroll to end
+            // window.scrollTo(0, document.body.scrollHeight);
 
-            window.scrollTo(0, document.body.scrollHeight);
+            // text box on top, scroll to top;
+            spb.getScrollElement().scrollTo(0, 99999);
+
+            window.scrollTo(0, 0);
         });
 
         // io.on('chatt_image', img => {
@@ -309,24 +438,59 @@
             // console.log(user);
             const listItem = document.createElement('li');
             listItem.innerHTML = `${user.name} joined`;
+            listItem.style.textAlign = 'center';
+            listItem.style.color = 'var(--text-light)';
+
             messages.appendChild(listItem);
             // $('#messages').append($('<li>').text(`${msg.user}: ${msg.message}`));
+            spb.getScrollElement().scrollTo(0, 99999);
+
             window.scrollTo(0, document.body.scrollHeight);
         })
 
         io.on('newName', user => {
             const listItem = document.createElement('li');
             listItem.innerHTML = `${user.from} changed name to ${user.to}`;
+            listItem.style.textAlign = 'center';
+            listItem.style.color = 'var(--text-light)';
+
             messages.appendChild(listItem);
             // console.log(user);
-            window.scrollTo(0, document.body.scrollHeight);
+            // window.scrollTo(0, document.body.scrollHeight);
+            // spb.getScrollElement().scrollTop = 99999
+            spb.getScrollElement().scrollTo(0, 99999);
+
+            document.getElementById('msgs').scrollTo(0, document.getElementById('msgs').offsetHeight);
         })
 
         
 
         io.on('typing', is => {
-            document.title = is ? `${is.user} is typing` : 'RocketChatto';
+            let remove = (str) => {
+                setTimeout(() => {
+                    if(str == 0){
+                        document.title = "RocketChatto";
+                    }
+                    else if(str == 1){
+                        app.warningMessage = '';
+                    }
+                }, 1000);
+            }
+
+            document.title = is ? `${is.user} is typing` : remove('RocketChatto');
+            app.warningMessage = is && is.user != app.user ? `${is.user} is typing` : remove('');
         })
+
+        setTimeout(() => {
+            spb = new SimpleBar(document.getElementsByClassName('cm-messages-main-container')[0]);
+            // spb.getScrollElement().scrollTop = spb.el.offsetHeight
+            setTimeout(() => {
+                // spb.getScrollElement().scrollTo(0, 99999);
+                // spb.getScrollElement().scrollTop = spb.el.scrollHeight + 99999999;
+            }, 300);
+
+        }, 50);
+
 
     </script>
 
