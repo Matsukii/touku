@@ -17,11 +17,14 @@
         *{
             font-family: 'Catamaran', sans-serif;
         }
+        ::placeholder{
+            color: #A79CC1;
+        }
         .dark{
             --color-accent:      #30A0FF;
             --color-background:  #222222;
             --text-dark:         #CCCCCC;
-            --text-light:        #606060;
+            --text-light:        #A79CC1;
             --color-link:        #03A9F4;
 
             --color-primary:     #191919;
@@ -30,10 +33,10 @@
             --color-quarternary: #333333;
         }
         .light{
-            --color-accent:      #30A0FF;
-            --color-background:  #FFFFFF;
+            --color-accent:      #3C2963;
+            --color-background:  linear-gradient(180deg, #F1F5F8 0%, #EBF3FA 0.01%, #DDE7F378 53.92%, #E6F0F9 100%), linear-gradient(180deg, #E8F0F7 3.43%, #E3EDF7 47.52%, #E3E7F7 100%);
             --text-dark:         #606060;
-            --text-light:        #CECECE;
+            --text-light:        #A79CC1;
             --color-link:        #03A9F4;
 
             --color-primary:     #FFFFFF;
@@ -42,7 +45,7 @@
             --color-quarternary: #CECECE;
         }
         body{
-            background: var(--color-primary);
+            background: var(--color-background);
             color: var(--text-dark);
             margin: 0;
             height: 100vh;
@@ -50,14 +53,17 @@
         textarea{
             background: var(--color-tertiary);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 5px;
             width: 200px;
             height: 30px;
             color: var(--text-dark);
             font-size: 100%;
             width: -webkit-fill-available;
+            resize: none;
             padding: 5px 15px 0px;
+            background: linear-gradient(17.62deg, #ffffff61 -50.86%, #ecf1f700 19.28%, #cfdceb38 92.21%);
+            box-shadow: inset 3px 3px 10px rgba(18, 46, 100, 0.2), inset -4px 0px 11px rgba(255, 255, 255, 0.7)
         }
         input{
             font-size: 100%;
@@ -77,6 +83,9 @@
         li{
             list-style: none;
         }
+        li b{
+            letter-spacing: 0.3px;
+        }
         ul{
             padding-left: 10px;
         }
@@ -92,17 +101,30 @@
             color: var(--color-link);
         }
 
+        a[onlineCounter]{
+            color: var(--color-accent);
+        }
+
         button[send]{
             border: none;
             padding: 0px 10px;
             margin-left: 10px;
-            border-radius: 5px;
+            border-radius: 10px;
             background: var(--color-background);
             color: var(--color-accent);
             font-variant: all-small-caps;
             font-size: 100%;
+            background: linear-gradient(0deg, #E3EDF7, #E3EDF7);
+            box-shadow: 2px 4px 10px #88a5bf55, -2px -2px 10px #ffffff
+
         }
 
+        .inputs{
+            padding: 5px 15px 0px;
+            background: linear-gradient(17.62deg, #ffffff61 -50.86%, #ecf1f700 19.28%, #cfdceb38 92.21%);
+            box-shadow: inset 3px 3px 10px rgba(18, 46, 100, 0.2), inset -4px 0px 11px rgba(255, 255, 255, 0.7);
+            color: var(--color-accent);
+        }
 
         #app{
             height: 90%;
@@ -117,21 +139,45 @@
         }
         .cm-minibar-container{
             margin: 15px 0px 0px;
-            background: var(--color-tertiary);
+            background: var(--color-background);
             border-radius: 10px;
             height: 20px;
             padding: 13px 15px 5px;
             display: flex;
             flex-direction: column-reverse;
+            background: linear-gradient(0deg, #E3EDF7, #E3EDF7);
+            box-shadow: 4px 4px 16px #88a5bf55, -2px -2px 15px  #ffffff
+        }
+        .pm-minibar-container{
+            margin: 15px 0px 0px;
+            /* background: var(--color-background); */
+            border-radius: 10px;
+            height: 20px;
+            padding: 13px 15px 5px;
+            display: flex;
+            /* flex-direction: column-reverse; */
+            /* background: linear-gradient(0deg, #E3EDF7, #E3EDF7); */
+            /* /* box-shadow: 4px 4px 16px #88a5bf55, -2px -2px 15px #ffffff; */
         }
         .cm-minibar-container b{
-            margin-bottom: -8ox;
+            /* margin-bottom: -8px; */
+      
+        }
+        .pm-minibar-container b{
+            /* margin-bottom: -zpx; */
+            font-size: 170%;
+            font-weight: 300;
+            margin: auto;
+            margin-top: -14px;
+            color: var(--color-accent);
+            letter-spacing: 1.1px;
         }
         .cm-minibar-container img{
             align-self: flex-end;
             margin-bottom: -21px;
             max-width: 16px;
             cursor: pointer;
+            
         }
 
         .cm-messages-main-container{
@@ -143,25 +189,75 @@
         }
 
         .pf-back-icon{
-            transform: rotate(-90deg);
-            max-width: 100px;
+            align-self: flex-end;
+            margin-bottom: -5px;
+            max-width: 35px;
+            border-radius: 10px;
             cursor: pointer;
+            position: absolute;
+            /* margin-right: 150px; */
+            box-shadow: 3px 4px 11px #88a5bf52, -4px -4px 12px #ffffffd1;
+            align-self: center;
+            margin-top: -5px;
+        }
+
+
+        .pmp-edit-cont{
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pmp-edit-cont label{
+            margin-left: 10px;
+            color: var(--color-accent);
+            margin-top: 10px;
+        }
+        .pmp-edit-cont .pmp-newname-input{
+            border-radius: 8px;
+            font-size: 110%;
+        }
+        .pmp-edit-cont .pmp-color-input{
+            border-radius: 8px;
+            max-width: 150px;
+            font-size: 110%;
+        }
+
+        .pmp-color-input:focus, .pmp-newname-input:focus{
+            box-shadow: 3px 4px 11px #88a5bfc2, -4px -4px 12px #fffffffa;
+            transition: all 0.3s ease-in-out;
+            outline: none;
+        }
+
+        #colorInDisp{
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            padding: 0;
+            margin: 0;
+            color: var(--color-accent);
+            display: inline-flex;
+            position: absolute;
+            margin-left: 20px;
+            box-shadow: 3px 4px 11px #88a5bfc2, -4px -4px 12px #fffffffa;
+            cursor: pointer;
+            /* user-select: none; */
         }
     </style>
     
 </head>
-<body class="dark">
+<body class="light">
     <!-- konnichiwa
     The actual favicon is from Coding planets app, <br>
     it is temorary untuil i create one, <br>
     it was the mos similar to an icon i could find quickly -->
 
     <div id="app">
-        <div class="chatt-main-container" v-if="showChatto">
+        <div class="chatt-main-container" id="messager-container" >
 
             <div class="cm-minibar-container">
                 <b>
-                    online: <a>{{counter}}</a>
+                    online: <a onlineCounter>{{counter}}</a>
                 </b>
                 <img src="/icons/profile.svg" alt="profile icon" v-on:click="showChatto = !showChatto">
 
@@ -189,9 +285,44 @@
         </div>
       
         <div class="profile-main-container chatt-main-container" v-if="!showChatto">
-            <div class="cm-minibar-container">
-                <img src="/icons/arrowUp.svg" class="pf-back-icon" alt="profile icon" v-on:click="showChatto = !showChatto">
+            <div class="pm-minibar-container">
+                <img src="/icons/arrowLeft.svg" class="pf-back-icon" alt="profile icon" v-on:click="showChatto = !showChatto">
                 <b> Profile </b>
+            </div>
+
+            <div class="pm-profile-cont">
+                <img src="" alt="profile image">
+                <p><b>{{user}}</b></p>
+
+                <div class="pmp-edit-cont">
+                    <label for="nnewNameIn">Nickname</label>
+                    <input
+                        type="text"
+                        v-bind:placeholder="user"
+                        v-model="newUserName"
+                        id="nnewNameIn"
+                        spellcheck="false"
+                        class="inputs pmp-newname-input"
+                    > 
+
+                    <label for="nnewNameIn">Color</label>
+                    <div>
+                        <input
+                            type="text"
+                            v-bind:placeholder="'#3C2963' || color"
+                            v-model="color"
+                            id="colorIn"
+                            spellcheck="false"
+
+                            class="inputs pmp-color-input"
+                            maxlength="9"
+                        >
+                        <div id="colorInDisp"></div>
+
+                    </div>
+                    
+
+                </div>
             </div>
         </div>
 
@@ -258,6 +389,16 @@
                 })
             },
             watch:{
+                showChatto(val){
+                    let msgCont = document.getElementById('messager-container');
+                    if(val){
+                        msgCont.style.display = ""
+                    }
+                    else {
+                        msgCont.style.display = "none"
+
+                    }
+                },
                 message(val){
                     if(val){
                         io.emit('typing', {user: this.user});
@@ -349,7 +490,7 @@
                     //     if (name.avaliable){
                     //     }
                     // })
-                    Cookies.set('name', this.newUserName, {domain: '.localhost:3000'});
+                    Cookies.set('name', this.newUserName, {domain: `.${window.location.host}`});
                     localStorage.setItem('name', this.newUserName)
                     io.emit('newName', {from: this.user, to: this.newUserName});
                     this.user = this.newUserName;
@@ -400,6 +541,9 @@
             }
             else if(msg.type == 'vid'){
                 listItem.innerHTML = `<b style="color:${msg.color}">${msg.user}</b>: <br> <iframe width="300px" src="${msg.message}"></iframe>`;
+            }
+            else if(msg.rawhtml){
+                listItem.innerHTML = `<b style="color:${msg.color}">${msg.user}</b>: <br> ${msg.message}`;
             }
             else{
                 msg.message = urlReg.test(msg.message) ? `<a href="${msg.message}" target="blank">${msg.message}</a>`: msg.message;
