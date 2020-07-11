@@ -24,7 +24,7 @@ let messages = [];
 io.on('connection', (socket) => {
     var ip = socket.handshake.address;
 
-    socket.emit('chatt', {user: 'Dev', message: `visit the project repo <a href="${conf.app.repo}">github.com/matsukii/rocketchat</a>`, rawhtml: true});
+    socket.emit('chatt', {user: 'Dev', message: `visit the project repo <a href="${conf.app.repo}">github.com/matsukii/touku</a>`, rawhtml: true});
 
     if(messages.length > 0){
         messages.forEach(m => {
