@@ -1,7 +1,7 @@
 module.exports = {
     app:{
         port: process.env.PORT || 3000,
-        repo: 'https://github.com/matsukii/rocketchat'
+        repo: 'https://github.com/matsukii/touku'
     },
     polarpod:{
         root: 'https://polarpod.herokuapp.com/',
