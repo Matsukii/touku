@@ -25,7 +25,7 @@
   "homepage": "https://github.com/Matsukii/rocketchat#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0",
     "uuid": "^3.3.3"
